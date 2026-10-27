@@ -1,0 +1,121 @@
+
+import 'package:flutter/material.dart';
+import 'package:flutter_application_2/termo-de-autorizacao.dart';
+
+void main() => runApp(const MaterialApp(
+  debugShowCheckedModeBanner: false,
+  home: CadastroPet(),
+));
+
+class CadastroPet extends StatefulWidget {
+  const CadastroPet({super.key});
+
+  @override
+  State<CadastroPet> createState() => _CadastroPetState();
+}
+
+class _CadastroPetState extends State<CadastroPet> {
+  final _formKey = GlobalKey<FormState>();
+  final nome = TextEditingController();
+  final raca = TextEditingController();
+  final idade = TextEditingController();
+  final tutor = TextEditingController();
+  final List<Pet> _petsCadastrados = [];
+  String? especie;
+
+
+void _adicionarPet() {
+    if (_formKey.currentState!.validate()) {
+    setState(() {
+    _petsCadastrados.add(Pet(
+      nome: nome.text,
+      especie: raca,
+      idade: int.parse(idade.text),
+      Castrado: _petsCadastrados,
+        ));
+      });
+    } 
+  } 
+
+
+
+  @override
+  void dispose() {
+    nome.dispose();
+    raca.dispose();
+    idade.dispose();
+    tutor.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Cadastro de Pet')),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              const Icon(Icons.pets, size: 70, color: Colors.blue),
+              campo(nome, 'Nome do pet'),
+              DropdownButtonFormField<String>(
+                decoration: const InputDecoration(labelText: 'Espécie'),
+                items: ['Cachorro', 'Gato', 'Ave', 'Outro']
+                    .map((e) => DropdownMenuItem(
+                        value: e, child: Text(e)))
+                    .toList(),
+                onChanged: (v) => setState(() => especie = v),
+                validator: (v) => v == null ? 'Selecione a espécie' : null,
+              ),
+              campo(raca, 'Raça'),
+              campo(idade, 'Idade em anos', numero: true),
+              campo(tutor, 'Nome do tutor'),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                Navigator.push(
+                 context,
+                 MaterialPageRoute(builder: (context) => const TermoDeAutorizacao()),
+                       );
+                  },
+                child: const Text('Ir para a próxima tela'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget campo(TextEditingController c, String label,
+      {bool numero = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: TextFormField(
+        controller: c,
+        keyboardType:
+            numero ? TextInputType.number : TextInputType.text,
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+        ),
+        validator: (v) {
+          if (v == null || v.trim().isEmpty) {
+            return 'Preencha $label';
+          }
+          if (numero &&
+              (int.tryParse(v) == null || int.parse(v) < 0)) {
+            return 'Informe uma idade válida';
+          }
+          return null;
+        },
+      ),
+    );
+  }
+}
+class Pet {
+}
+
+
